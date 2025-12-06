@@ -341,6 +341,19 @@ body {
 
 .choice-button.selected .choice-label { background: var(--accent); }
 
+/* Practice mode feedback states */
+.choice-button.correct {
+  border-color: var(--accent);
+  background: rgba(16, 185, 129, 0.1);
+}
+.choice-button.correct .choice-label { background: var(--accent); }
+
+.choice-button.wrong {
+  border-color: var(--danger);
+  background: rgba(239, 68, 68, 0.1);
+}
+.choice-button.wrong .choice-label { background: var(--danger); }
+
 .choice-text {
   font-size: 0.85rem;
   flex: 1;

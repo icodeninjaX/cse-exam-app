@@ -4,6 +4,7 @@ interface QuestionNavigatorProps {
   totalQuestions: number;
   currentQuestion: number;
   answeredQuestions: Set<number>;
+  bookmarkedQuestions?: Set<number>;
   onQuestionSelect: (index: number) => void;
 }
 
@@ -11,22 +12,34 @@ export default function QuestionNavigator({
   totalQuestions,
   currentQuestion,
   answeredQuestions,
+  bookmarkedQuestions = new Set(),
   onQuestionSelect,
 }: QuestionNavigatorProps) {
+  const getButtonClass = (index: number) => {
+    if (index === currentQuestion) return 'navigator-button current';
+    if (answeredQuestions.has(index)) return 'navigator-button answered';
+    return 'navigator-button unanswered';
+  };
+
   return (
     <div className="question-navigator">
       <div className="navigator-header">
-        <h3>Question Navigator</h3>
+        <h3>Navigator</h3>
         <div className="navigator-legend">
           <span className="legend-item">
-            <span className="legend-dot current"></span> Current
+            <span className="legend-dot current"></span> Now
           </span>
           <span className="legend-item">
-            <span className="legend-dot answered"></span> Answered
+            <span className="legend-dot answered"></span> Done
           </span>
           <span className="legend-item">
-            <span className="legend-dot unanswered"></span> Unanswered
+            <span className="legend-dot unanswered"></span> Skip
           </span>
+          {bookmarkedQuestions.size > 0 && (
+            <span className="legend-item">
+              <span style={{ fontSize: '0.6rem' }}>🚩</span> Flag
+            </span>
+          )}
         </div>
       </div>
       
@@ -34,14 +47,12 @@ export default function QuestionNavigator({
         {Array.from({ length: totalQuestions }, (_, i) => (
           <button
             key={i}
-            className={`navigator-button ${
-              i === currentQuestion
-                ? 'current'
-                : answeredQuestions.has(i)
-                ? 'answered'
-                : 'unanswered'
-            }`}
+            className={getButtonClass(i)}
             onClick={() => onQuestionSelect(i)}
+            style={bookmarkedQuestions.has(i) ? { 
+              boxShadow: '0 0 0 2px var(--warning)',
+              position: 'relative'
+            } : undefined}
           >
             {i + 1}
           </button>
@@ -49,9 +60,12 @@ export default function QuestionNavigator({
       </div>
 
       <div className="navigator-stats">
-        <span className="stat">
-          <strong>{answeredQuestions.size}</strong> / {totalQuestions} answered
-        </span>
+        <strong>{answeredQuestions.size}</strong>/{totalQuestions}
+        {bookmarkedQuestions.size > 0 && (
+          <span style={{ marginLeft: '0.5rem', color: 'var(--warning)' }}>
+            🚩{bookmarkedQuestions.size}
+          </span>
+        )}
       </div>
     </div>
   );
