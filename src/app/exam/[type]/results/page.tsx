@@ -212,6 +212,25 @@ export default function ResultsPage() {
                         );
                       })}
                     </div>
+
+                    {/* Explanation Section */}
+                    {q.explanation && (
+                      <div style={{
+                        marginTop: '0.75rem',
+                        padding: '0.75rem',
+                        background: 'rgba(37, 99, 235, 0.08)',
+                        border: '1px solid var(--primary)',
+                        borderRadius: '0.5rem',
+                        fontSize: '0.8rem'
+                      }}>
+                        <div style={{ fontWeight: '700', color: 'var(--primary)', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                          💡 How to Solve
+                        </div>
+                        <div style={{ color: 'var(--text)', lineHeight: '1.5' }}>
+                          {q.explanation}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               })
