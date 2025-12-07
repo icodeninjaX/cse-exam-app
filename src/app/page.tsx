@@ -217,16 +217,6 @@ export default function Home() {
           )}
         </section>
       )}
-
-      <footer style={{ textAlign: 'center', padding: '1.5rem 1rem', color: 'var(--text-muted)', fontSize: '0.75rem' }}>
-        <p>
-          Practice only • Official exams at{' '}
-          <a href="https://www.csc.gov.ph" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary)' }}>
-            csc.gov.ph
-          </a>
-        </p>
-        <p style={{ marginTop: '0.35rem' }}>80% passing • A/B/C/D format</p>
-      </footer>
     </div>
   );
 }

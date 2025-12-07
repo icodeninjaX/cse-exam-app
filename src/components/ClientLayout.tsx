@@ -43,6 +43,19 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
       {/* Main Content Wrapper with Spacers */}
       <div className="content-wrapper">
         {children}
+        
+        <footer style={{ textAlign: 'center', padding: '2rem 1rem', color: 'var(--text-muted)', fontSize: '0.75rem', marginTop: '2rem', borderTop: '1px solid var(--border)' }}>
+          <p style={{ marginBottom: '0.5rem' }}>
+            Created by <strong style={{ color: 'var(--primary)' }}>Kit Dwarren</strong>
+          </p>
+          <p>
+            Practice only • Official exams at{' '}
+            <a href="https://www.csc.gov.ph" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary)' }}>
+              csc.gov.ph
+            </a>
+          </p>
+          <p style={{ marginTop: '0.35rem' }}>80% passing • A/B/C/D format</p>
+        </footer>
       </div>
 
       <style jsx>{`
