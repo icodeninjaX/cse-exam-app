@@ -3,8 +3,9 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { EXAM_CONFIG, SECTION_NAMES, ExamType } from '@/lib/examConfig';
+import Analytics from '@/components/Analytics';
 
-interface ExamHistoryItem {
+export interface ExamHistoryItem {
   id: number;
   examType: ExamType;
   score: number;
@@ -93,6 +94,8 @@ export default function Home() {
       {/* Exam History Section */}
       {history.length > 0 && (
         <section style={{ padding: '1rem', maxWidth: '600px', margin: '0 auto' }}>
+          <Analytics history={history} />
+          
           <button
             onClick={() => setShowHistory(!showHistory)}
             style={{

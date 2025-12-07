@@ -1,8 +1,4 @@
 ﻿import { ExamType } from './examConfig';
-import { EXTRA_VERBAL } from './extraVerbal';
-import { EXTRA_NUMERICAL } from './extraNumerical';
-import { EXTRA_ANALYTICAL } from './extraAnalytical';
-import { EXTRA_GENERAL } from './extraGeneral';
 
 export interface Question {
   id: string;
@@ -224,9 +220,15 @@ export const CLERICAL_QUESTIONS: Question[] = [
 export const SAMPLE_QUESTIONS: Question[] = [...PROFESSIONAL_QUESTIONS, ...CLERICAL_QUESTIONS];
 
 // Get questions for specific exam type - combines base + extra questions for variety
-export function getQuestionsForExam(examType: ExamType): Question[] {
+export async function getQuestionsForExam(examType: ExamType): Promise<Question[]> {
   if (examType === 'professional') {
-    // Combine all professional questions (170 base + 240 extra = 410 total)
+    // Dynamic imports for lazy loading
+    const { EXTRA_VERBAL } = await import('./extraVerbal');
+    const { EXTRA_NUMERICAL } = await import('./extraNumerical');
+    const { EXTRA_ANALYTICAL } = await import('./extraAnalytical');
+    const { EXTRA_GENERAL } = await import('./extraGeneral');
+
+    // Combine all professional questions
     return [
       ...PROFESSIONAL_QUESTIONS,
       ...EXTRA_VERBAL,
@@ -237,16 +239,19 @@ export function getQuestionsForExam(examType: ExamType): Question[] {
   } else {
     // Sub-professional: exclude analytical, include clerical
     const baseQuestions = PROFESSIONAL_QUESTIONS.filter(q => q.section !== 'analytical');
-    const extraVerbal = EXTRA_VERBAL;
-    const extraNumerical = EXTRA_NUMERICAL;
-    const extraGeneral = EXTRA_GENERAL;
-    return [...baseQuestions, ...CLERICAL_QUESTIONS, ...extraVerbal, ...extraNumerical, ...extraGeneral];
+    
+    // Lazy load extra questions
+    const { EXTRA_VERBAL } = await import('./extraVerbal');
+    const { EXTRA_NUMERICAL } = await import('./extraNumerical');
+    const { EXTRA_GENERAL } = await import('./extraGeneral');
+    
+    return [...baseQuestions, ...CLERICAL_QUESTIONS, ...EXTRA_VERBAL, ...EXTRA_NUMERICAL, ...EXTRA_GENERAL];
   }
 }
 
 // Generate exam with exact question count - randomly selects from pool
-export function generateExamQuestions(examType: ExamType, count: number): Question[] {
-  const questions = getQuestionsForExam(examType);
+export async function generateExamQuestions(examType: ExamType, count: number): Promise<Question[]> {
+  const questions = await getQuestionsForExam(examType);
   
   // Shuffle the questions using Fisher-Yates algorithm
   const shuffled = [...questions];

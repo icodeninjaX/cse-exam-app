@@ -5,6 +5,7 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Timer from '@/components/Timer';
 import QuestionCard from '@/components/QuestionCard';
 import QuestionNavigator from '@/components/QuestionNavigator';
+import ExamSkeleton from '@/components/ExamSkeleton';
 import { EXAM_CONFIG, ExamType, SECTION_NAMES } from '@/lib/examConfig';
 import { generateExamQuestions, Question } from '@/lib/questions';
 
@@ -45,8 +46,16 @@ export default function ExamPage() {
     }
 
     // Generate new questions
-    const generatedQuestions = generateExamQuestions(examType, config.totalItems);
-    setQuestions(generatedQuestions);
+    const loadQuestions = async () => {
+      try {
+        const generatedQuestions = await generateExamQuestions(examType, config.totalItems);
+        setQuestions(generatedQuestions);
+      } catch (error) {
+        console.error("Failed to load questions", error);
+      }
+    };
+    
+    loadQuestions();
   }, [examType, config, router, isPracticeMode]);
 
   // Auto-save progress to localStorage
@@ -221,11 +230,7 @@ export default function ExamPage() {
   };
 
   if (!config || questions.length === 0) {
-    return (
-      <div className="exam-page" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p>Loading exam...</p>
-      </div>
-    );
+    return <ExamSkeleton />;
   }
 
   // Pre-exam instructions screen
