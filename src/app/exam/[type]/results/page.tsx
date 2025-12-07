@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { EXAM_CONFIG, ExamType } from '@/lib/examConfig';
+import { EXAM_CONFIG, ExamType, SECTION_NAMES } from '@/lib/examConfig';
 import { Question } from '@/lib/questions';
 
 interface ExamResults {
@@ -276,6 +276,83 @@ export default function ResultsPage() {
             <div className="detail-label">Total</div>
           </div>
         </div>
+
+        {/* Section Breakdown */}
+        {results.questions && results.questions.length > 0 && (() => {
+          // Calculate section stats
+          const sectionStats: Record<string, { correct: number; total: number }> = {};
+          results.questions.forEach((q) => {
+            const section = q.section;
+            if (!sectionStats[section]) {
+              sectionStats[section] = { correct: 0, total: 0 };
+            }
+            sectionStats[section].total++;
+            if (results.answers[q.id] === q.correctAnswer) {
+              sectionStats[section].correct++;
+            }
+          });
+
+          return (
+            <div style={{
+              width: '100%',
+              background: 'var(--bg)',
+              border: '1px solid var(--border)',
+              borderRadius: '0.5rem',
+              padding: '0.75rem',
+              marginBottom: '0.75rem'
+            }}>
+              <div style={{ 
+                fontSize: '0.75rem', 
+                fontWeight: '600', 
+                marginBottom: '0.5rem',
+                color: 'var(--text-muted)'
+              }}>
+                📊 Section Breakdown
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                {Object.entries(sectionStats).map(([section, stats]) => {
+                  const percentage = Math.round((stats.correct / stats.total) * 100);
+                  const isWeak = percentage < 60;
+                  const isStrong = percentage >= 80;
+                  
+                  return (
+                    <div key={section} style={{ fontSize: '0.75rem' }}>
+                      <div style={{ 
+                        display: 'flex', 
+                        justifyContent: 'space-between', 
+                        marginBottom: '0.2rem' 
+                      }}>
+                        <span style={{ fontWeight: '500' }}>
+                          {SECTION_NAMES[section] || section}
+                        </span>
+                        <span style={{ 
+                          fontWeight: '600',
+                          color: isWeak ? 'var(--danger)' : isStrong ? 'var(--accent)' : 'var(--text)'
+                        }}>
+                          {stats.correct}/{stats.total} ({percentage}%)
+                        </span>
+                      </div>
+                      <div style={{
+                        height: '6px',
+                        background: 'var(--border)',
+                        borderRadius: '3px',
+                        overflow: 'hidden'
+                      }}>
+                        <div style={{
+                          height: '100%',
+                          width: `${percentage}%`,
+                          background: isWeak ? 'var(--danger)' : isStrong ? 'var(--accent)' : 'var(--warning)',
+                          borderRadius: '3px',
+                          transition: 'width 0.5s ease'
+                        }} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Review Answers Button */}
         {results.questions && results.questions.length > 0 && (

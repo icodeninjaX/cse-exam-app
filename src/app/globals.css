@@ -232,12 +232,23 @@ body {
   stroke: var(--accent);
   stroke-width: 3;
   stroke-linecap: round;
+  transition: stroke 0.3s ease;
 }
 
 .timer-normal .timer-ring-progress { stroke: var(--accent); }
 .timer-caution .timer-ring-progress { stroke: var(--warning); }
 .timer-warning .timer-ring-progress { stroke: #f97316; }
 .timer-danger .timer-ring-progress { stroke: var(--danger); }
+
+/* Pulse animation for danger state */
+.timer-danger .timer-display {
+  animation: timer-pulse 1s ease-in-out infinite;
+}
+
+@keyframes timer-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
 
 .timer-text {
   position: absolute;
@@ -250,6 +261,7 @@ body {
   font-size: 0.6rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
+  transition: color 0.3s ease;
 }
 
 .timer-normal .timer-time { color: var(--accent); }
@@ -258,7 +270,24 @@ body {
 .timer-danger .timer-time { color: var(--danger); }
 
 .timer-label { display: none; }
-.timer-warning-text { display: none; }
+
+/* Warning text - now visible */
+.timer-warning-text {
+  display: none;
+  font-size: 0.65rem;
+  color: var(--danger);
+  font-weight: 600;
+  animation: blink 1s ease-in-out infinite;
+}
+
+.timer-danger .timer-warning-text {
+  display: block;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
 
 /* ===== QUESTION CARD - COMPACT ===== */
 .question-card {
@@ -310,13 +339,22 @@ body {
   display: flex;
   align-items: center;
   gap: 0.65rem;
-  padding: 0.7rem 0.85rem;
+  padding: 0.85rem 1rem;
   background: var(--bg);
   border: 2px solid var(--border);
   border-radius: 0.5rem;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   text-align: left;
+  touch-action: manipulation;
+  position: relative;
+  overflow: hidden;
+}
+
+.choice-button:hover {
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .choice-button:active { transform: scale(0.98); }
@@ -475,7 +513,20 @@ body {
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  touch-action: manipulation;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-btn:active {
+  transform: scale(0.96);
+}
+
+.nav-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .nav-btn.prev {
