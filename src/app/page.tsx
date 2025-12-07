@@ -19,6 +19,30 @@ export interface ExamHistoryItem {
 export default function Home() {
   const [history, setHistory] = useState<ExamHistoryItem[]>([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [titleIndex, setTitleIndex] = useState(0);
+  const [isVisible, setIsVisible] = useState(true);
+  
+  const TITLES = [
+    "CSE Simulator",
+    "Focus. Review. Pass.",
+    "Para sa Pangarap. Para sa Bayan.",
+    "Magiging Civil Servant Ka Rin.",
+    "One Exam Away from Your Dream.",
+    "Hindi Madali, Pero Kakayanin.",
+    "Make Your Future Self Proud."
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsVisible(false); // Start fade out
+      setTimeout(() => {
+        setTitleIndex((prev) => (prev + 1) % TITLES.length);
+        setIsVisible(true); // Start fade in
+      }, 500); // Wait 0.5s for fade out to complete
+    }, 4000); // 4 seconds visible
+
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const saved = localStorage.getItem('exam_history');
@@ -43,7 +67,13 @@ export default function Home() {
     <div className="landing-page">
       <header className="hero">
         <div className="hero-badge">🇵🇭 Philippine Civil Service</div>
-        <h1>CSE Simulator</h1>
+        <h1 style={{ 
+          opacity: isVisible ? 1 : 0, 
+          transition: 'opacity 0.5s ease-in-out',
+          minHeight: '1.2em' // Prevent layout shift
+        }}>
+          {TITLES[titleIndex]}
+        </h1>
         <p className="subtitle">Practice for Civil Service Exam with timed mock tests</p>
       </header>
 
@@ -89,6 +119,27 @@ export default function Home() {
             </div>
           </div>
         ))}
+
+        {/* Study Mode Card */}
+        <div className="exam-card" style={{ border: '2px dashed var(--primary)', background: 'rgba(37, 99, 235, 0.03)' }}>
+          <h2>📖 Study Mode</h2>
+          <div className="stats">
+            <div className="stat" style={{ flex: 'none', width: '100%' }}>
+              <div className="stat-value">400+</div>
+              <div className="stat-label">Total Questions</div>
+            </div>
+          </div>
+          
+          <div style={{ margin: '1rem 0', fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: '1.5' }}>
+            Browse through all questions at your own pace. Reveal answers instantly and learn from detailed explanations.
+          </div>
+
+          <Link href="/study" style={{ display: 'block', marginTop: 'auto' }}>
+            <button className="start-btn" style={{ margin: 0, width: '100%', background: 'var(--primary)' }}>
+              🧠 Start Studying
+            </button>
+          </Link>
+        </div>
       </main>
 
       {/* Exam History Section */}
